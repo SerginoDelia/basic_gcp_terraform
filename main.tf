@@ -14,10 +14,10 @@ terraform {
 
 provider "google" {
   # Configuration options
-  project     = "<PROJECT_ID>"
+  project     = "iamagwe"
   region      = "us-east1"
   zone        = "us-east1-b"
-  credentials = "<CREDENTIALS>"
+  credentials = "iamagwe-40a98105e9fd.json"
 }
 
 resource "google_storage_bucket" "bucket" {
@@ -77,3 +77,30 @@ output "website_url" {
   value = "https://storage.googleapis.com/${google_storage_bucket.bucket.name}/index.html"
 }
 
+# Create an auto VPC with one subnet
+
+resource "google_compute_network" "auto-vpc-tf" {
+  name                    = "auto-vpc-tf"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "sub-useast" {
+  name          = "sub-useast"
+  network       = google_compute_network.auto-vpc-tf.id
+  ip_cidr_range = "10.177.10.0/24"
+  region        = "us-east1"
+}
+
+
+#resource "google_compute_network" "custom-vpc-tf" {
+#name = "custom-vpc-tf"
+#auto_create_subnetworks = false
+#}
+
+output "auto" {
+  value = google_compute_network.auto-vpc-tf.id
+}
+
+#output "custom" {
+#  value = google_compute_network.custom-vpc-tf.id
+#}
